@@ -32,7 +32,7 @@ async def handle_unexpected_exception(request: Request, exc: Exception):
 
 cors_origins = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173"
+    "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,https://mifra-enterprises-frontend.vercel.app"
 ).split(",")
 
 app.add_middleware(
