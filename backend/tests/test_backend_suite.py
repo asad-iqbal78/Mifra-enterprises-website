@@ -762,9 +762,23 @@ def test_invalid_id_checked_for_admin_product():
 
 
 def test_cors_allows_configured_development_origin():
-    response = client.get('/api/health', headers={'Origin': 'http://localhost:3000'})
+    origin = 'http://localhost:5174'
+    response = client.options(
+        '/api/admin/dashboard',
+        headers={
+            'Origin': origin,
+            'Access-Control-Request-Method': 'GET',
+            'Access-Control-Request-Headers': 'Authorization, Content-Type',
+        },
+    )
     assert response.status_code == 200
-    assert response.headers['access-control-allow-origin'] == 'http://localhost:3000'
+    assert response.headers['access-control-allow-origin'] == origin
+    assert 'GET' in response.headers['access-control-allow-methods']
+    assert 'Authorization' in response.headers['access-control-allow-headers']
+    assert 'Content-Type' in response.headers['access-control-allow-headers']
+
+    response = client.get('/api/admin/dashboard', headers={'Origin': origin})
+    assert response.status_code == 401
 
 
 def test_requirements_declare_runtime_dependencies():
