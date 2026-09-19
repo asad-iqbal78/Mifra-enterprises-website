@@ -1,4 +1,5 @@
 import logging
+import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +21,25 @@ app = FastAPI(
 
 logger = logging.getLogger(__name__)
 
+required_cors_origins = [
+    "https://mifra-enterprises-frontend.vercel.app",
+    "https://mifra-enterprises-admin.vercel.app",
+]
+default_cors_origins = required_cors_origins + [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+]
+configured_cors_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
+    if origin.strip()
+]
+cors_origins = list(dict.fromkeys(required_cors_origins + configured_cors_origins))
+if not configured_cors_origins:
+    cors_origins = default_cors_origins
+
 
 @app.exception_handler(Exception)
 async def handle_unexpected_exception(request: Request, exc: Exception):
@@ -31,16 +51,10 @@ async def handle_unexpected_exception(request: Request, exc: Exception):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://mifra-enterprises-frontend.vercel.app",
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5173",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 

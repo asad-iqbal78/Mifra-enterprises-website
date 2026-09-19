@@ -58,13 +58,17 @@ The backend uses an HTTP Bearer token:
 CORS is enabled in [backend/main.py](../backend/main.py) with `CORSMiddleware`.
 
 ### Default allowed origins
-- `http://localhost:3000`
-- `http://127.0.0.1:3000`
+- `https://mifra-enterprises-frontend.vercel.app`
+- `https://mifra-enterprises-admin.vercel.app`
 - `http://localhost:5173`
+- `http://localhost:5174`
 - `http://127.0.0.1:5173`
+- `http://127.0.0.1:5174`
 
-The value can be overridden through the environment variable:
+Additional origins can be supplied through the environment variable (comma-separated):
 - `CORS_ORIGINS`
+
+The production client and admin origins remain enabled even when `CORS_ORIGINS` is set.
 
 ---
 

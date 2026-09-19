@@ -781,6 +781,29 @@ def test_cors_allows_configured_development_origin():
     assert response.status_code == 401
 
 
+@pytest.mark.parametrize(
+    'origin',
+    [
+        'https://mifra-enterprises-frontend.vercel.app',
+        'https://mifra-enterprises-admin.vercel.app',
+    ],
+)
+def test_cors_allows_production_frontend_origins(origin):
+    response = client.options(
+        '/api/admin/dashboard',
+        headers={
+            'Origin': origin,
+            'Access-Control-Request-Method': 'GET',
+            'Access-Control-Request-Headers': 'Authorization, Content-Type',
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers['access-control-allow-origin'] == origin
+    assert 'GET' in response.headers['access-control-allow-methods']
+    assert 'Authorization' in response.headers['access-control-allow-headers']
+    assert 'Content-Type' in response.headers['access-control-allow-headers']
+
+
 def test_requirements_declare_runtime_dependencies():
     requirements = Path(__file__).parents[1].joinpath('requirements.txt').read_text(encoding='utf-16')
     assert 'firebase-admin' in requirements
